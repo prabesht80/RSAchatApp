@@ -1,0 +1,112 @@
+﻿@using SignalRSample.Algo;
+
+@model SignalRSample.Models.ViewModel.ChatVM
+@{
+    var primeGen = new Primes();
+     var publicKey = primeGen.GetKey();
+}
+
+ <input type="hidden" id="hdUserId" value="@Model.UserId" />
+
+<div class="container border m-3 p-4">
+        @*<div class="row">
+            <div class="col-3">Create Room</div>
+             <div class="col-4"><input type="text" class="form-control" id="createRoomName"></div>
+             <div class="col-3">
+             <input type="button" class="btn btn-primary" onclick="@($"addnewRoom({Model.MaxRoomAllowed})")" id="btnCreateRoom" value="Create Room" /></div>
+        </div>
+
+        <div class="row pt-3">
+            <div class="col-3">Delete Room</div>
+             <div class="col-4">
+                 <select class="form-select" id="ddlDelRoom" >
+                          
+                </select>               
+
+             </div>
+             <div class="col-3">
+             <input type="button" class="btn btn-danger" onclick="deleteRoom();" value="Delete Room" /></div>
+        </div>
+        </div>*@
+       @* 
+        <div class="container border m-3 p-4">
+        <div class="row">
+            <div class="col-3">Select Room</div>
+             <div class="col-4">
+                <select class="form-select" id="ddlSelRoom" >
+                          
+                </select>  
+                
+             </div>
+             
+        </div>
+
+        <div class="row pt-3">
+            <div class="col-3">Send Public Message</div>
+             <div class="col-4">
+                 <input type="text" class="form-control" id="txtPublicMessage">
+             </div>
+             <div class="col-3">
+             <input type="button" class="btn btn-info" onclick="sendPublicMessage()" value="Send Public Message" /></div>
+        </div>
+        </div>
+       
+             
+        </div>*@
+        <div class="row pt-3">
+            <div class="col-3">Select User</div>
+            <div class="col-4">
+                <select class="form-select" id="ddlSelUser">
+                </select>
+
+            </div>
+        </div>
+
+        <div class="row pt-3">
+
+            <div class="col-3">Send Private Message</div>
+             <div class="col-4"><input type="text" class="form-control" id="txtPrivateMessage"></div>
+             <div class="col-3">
+             <input type="button" class="btn btn-secondary" onclick="sendMessage();" id="sendButton" value="Send Private Message" /></div>
+        </div>
+        </div>
+
+        <div class="container border m-3 p-4 bg-light">
+    
+    <div class="row" style="min-height:200px;">
+        <div class="col-12">
+            Message List: 
+            <ul id="messagesList"></ul>
+        </div>
+    </div>
+ </div>
+       
+
+<script src="~/js/signalr.js"></script>
+<script src="~/js/chat.js"></script>
+<script>
+    function sendMessage(){
+
+        var connection = new signalR.HubConnectionBuilder().withUrl("/Hubs/ChatHub").build();
+
+        // Receive the RSA public key from the server
+        connection.on("PublicKey", function (Key) {           
+            PublicKey = Key;
+        });
+        
+
+        // Send encrypted data to the server
+        function sendMessage() {
+            var message = document.getElementById("txtPrivateMessage").value;
+
+            // Encrypt the message using the RSA public key
+            var encryptedMessage = PublicKey.Encrypt(message);
+
+            connection.invoke("SendMessage", encryptedMessage);
+            console.log(encryptedMessage);
+        }
+
+
+        sendPrivateMessage()
+    }
+</script>
